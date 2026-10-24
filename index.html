@@ -59,8 +59,8 @@ function removePaleWatermarkPixels(ctx,w,h){
 }
 function addGuidelyWatermark(ctx,w,h,logoImage){
   const opacity=Number($('watermarkOpacity').value),scale=Number($('watermarkScale').value);
-  const markW=w*scale,markH=markW*(logoImage.naturalHeight/logoImage.naturalWidth);
-  ctx.save();ctx.globalAlpha=opacity;ctx.translate(w/2,h/2);ctx.rotate(-Math.PI/4);ctx.drawImage(logoImage,-markW/2,-markH/2,markW,markH);ctx.restore();
+  const logoW=logoImage.width||logoImage.naturalWidth,logoH=logoImage.height||logoImage.naturalHeight;const markW=w*scale,markH=markW*(logoH/logoW);
+  ctx.save();ctx.globalAlpha=opacity;ctx.translate(w/2,h/2);ctx.rotate(-Math.PI/4);if(Number.isFinite(markW)&&Number.isFinite(markH)&&markW>0&&markH>0)ctx.drawImage(logoImage,-markW/2,-markH/2,markW,markH);ctx.restore();
 }
 async function processPdf(file,coverBytes,logoBytes){
   const {PDFDocument}=PDFLib;const original=await PDFDocument.load(await file.arrayBuffer());const originalPages=original.getPages();

@@ -21,25 +21,10 @@
 <hr class="divider"><div class="grid"><div class="field"><label for="noticeTitle">Notice title</label><input id="noticeTitle" value="RRB NTPC (UG) CBT-I"></div><div class="field"><label for="noticeSize">Notice font size (px)</label><input id="noticeSize" type="number" min="10" max="32" value="19"></div><div class="field" style="grid-column:1/-1"><label for="noticeBody">Notice description</label><textarea id="noticeBody">This paper belongs to the recruitment cycle notified under RRB NTPC (UG) CBT-I.</textarea></div></div>
 <div class="grid" style="margin-top:12px"><div class="field"><label for="renderScale">Inner page quality</label><select id="renderScale"><option value="1.25">Standard (smaller PDF)</option><option value="1.6" selected>High (recommended)</option><option value="2">Very high (larger PDF)</option></select></div><div class="field"><label for="watermarkOpacity">Guidely watermark opacity</label><select id="watermarkOpacity"><option value="0.08">Very light (8%)</option><option value="0.12" selected>Light (12%)</option><option value="0.16">Medium (16%)</option></select></div><div class="field"><label for="watermarkScale">Watermark size</label><select id="watermarkScale"><option value="0.22">Small</option><option value="0.30" selected>Medium</option><option value="0.38">Large</option></select></div></div>
 <label class="check"><input id="addWatermark" type="checkbox" checked> Add one diagonal Guidely watermark after removing pale Testbook watermark pixels</label>
-<hr class="divider"><div class="smallTitle">PDF promotion links</div>
-<div class="grid">
-  <div class="field"><label for="testSeriesName">Test Series name (shown on banner)</label><input id="testSeriesName" placeholder="e.g. RRB NTPC Mock Test Series"></div>
-  <div class="field"><label for="testSeriesUrl">Test Series link (Enroll Now)</label><input id="testSeriesUrl" type="url" placeholder="https://guidely.in/…"></div>
-  <div class="field"><label for="telegramUrl">Telegram channel / group link</label><input id="telegramUrl" type="url" placeholder="https://t.me/…"></div>
-  <div class="field"><label for="playStoreUrl">Google Play Store app link</label><input id="playStoreUrl" type="url" placeholder="https://play.google.com/store/apps/details?id=…"></div>
-</div>
-<div class="smallTitle" style="margin-top:14px">Footer design — customize sizes</div>
-<div class="grid">
-  <div class="field"><label for="footerTitleSize">Test Series name size (px)</label><input id="footerTitleSize" type="number" min="10" max="48" value="24"></div>
-  <div class="field"><label for="footerCtaSize">ENROLL NOW text size (px)</label><input id="footerCtaSize" type="number" min="8" max="30" value="15"></div>
-  <div class="field"><label for="footerTelegramTextSize">Telegram message size (px)</label><input id="footerTelegramTextSize" type="number" min="8" max="32" value="18"></div>
-  <div class="field"><label for="footerTelegramIconSize">Telegram logo size (px)</label><input id="footerTelegramIconSize" type="number" min="12" max="48" value="30"></div>
-</div>
-<div class="hint" style="margin-top:8px">The footer displays your Test Series name, a clickable ENROLL NOW button, and the message “Join our Telegram channel to get the latest exam updates and notifications instantly!” followed by a larger Telegram logo. The message and logo are clickable together. Footer sizes can be adjusted above. The banner appears only when enough blank space is detected, and the Play Store badge remains clickable near the top.</div>
 </div>
 <div class="card"><h2>4. Process</h2><div class="actions"><button class="btn" id="process">Replace first page & download ZIP</button><button class="btn secondary" id="clear">Clear files</button></div><div class="status" id="status" style="margin-top:10px">Select PDF files to begin.</div></div>
 </section><aside class="previewWrap"><div class="card"><div class="previewTop"><h2>Live cover preview</h2><button class="btn secondary" id="downloadPreview">Download cover PNG</button></div><div class="previewFrame"><canvas id="preview" class="previewCanvas" width="663" height="915"></canvas></div><p class="hint">Preview updates as you edit the exam name, shift and font sizes. This cover replaces page 1 of every PDF in the selected batch.</p></div></aside></div>
-<footer>Guidely PDF Cover & Branding Studio · Browser-side processing · Use only on files you are authorized to modify. Promotion links are embedded as clickable PDF links when space is available.</footer></main>
+<footer>Guidely PDF Cover & Branding Studio · Browser-side processing · Use only on files you are authorized to modify.</footer></main>
 <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);let chosen=[];let sheetRows=[];let activeOverrides={};const W=663,H=915;const bg=new Image();bg.src='/public/guidely-cover-template.png';const logo=new Image();logo.src='/public/guidely-logo.jpeg';if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';}
@@ -94,107 +79,6 @@ function addGuidelyWatermark(ctx,w,h,logoImage){
   const logoW=logoImage.width||logoImage.naturalWidth,logoH=logoImage.height||logoImage.naturalHeight;const markW=w*scale,markH=markW*(logoH/logoW);
   ctx.save();ctx.globalAlpha=opacity;ctx.translate(w/2,h/2);ctx.rotate(-Math.PI/4);if(Number.isFinite(markW)&&Number.isFinite(markH)&&markW>0&&markH>0)ctx.drawImage(logoImage,-markW/2,-markH/2,markW,markH);ctx.restore();
 }
-function addPdfUriLink(page,rect,url){
-  if(!url)return;
-  try{
-    const clean=String(url).trim();
-    if(!/^https:\/\//i.test(clean))return;
-    const ctx=page.doc.context;
-    const annot=ctx.register(ctx.obj({
-      Type:PDFLib.PDFName.of('Annot'),Subtype:PDFLib.PDFName.of('Link'),
-      Rect:rect,Border:[0,0,0],
-      A:{Type:PDFLib.PDFName.of('Action'),S:PDFLib.PDFName.of('URI'),URI:PDFLib.PDFString.of(clean)}
-    }));
-    page.node.addAnnot(annot);
-  }catch(err){console.warn('Could not add PDF link annotation:',err);}
-}
-function rowInkRatio(ctx,y,x0,x1,w){
-  const data=ctx.getImageData(x0,y,x1-x0,1).data;let ink=0,total=data.length/4;
-  for(let i=0;i<data.length;i+=4){if(data[i]<238||data[i+1]<238||data[i+2]<238)ink++;}
-  return total?ink/total:1;
-}
-function findTopRightBlank(ctx,w,h,boxW,boxH){
-  const x=Math.max(0,w-boxW-8),maxY=Math.min(Math.floor(h*.18),180);
-  for(let y=5;y<=maxY;y+=4){let ink=0,samples=0;
-    for(let yy=y;yy<y+boxH;yy+=4){const ratio=rowInkRatio(ctx,yy,x,x+boxW,w);ink+=ratio;samples++;}
-    if(samples&&ink/samples<.012)return {x,y};
-  }
-  return null;
-}
-function drawPlayStoreBadge(ctx,w,h){
-  const url=$('playStoreUrl').value.trim();if(!url||!/^https:\/\//i.test(url))return null;
-  const bw=30,bh=30;const pos=findTopRightBlank(ctx,w,h,bw,bh)||{x:Math.max(4,w-bw-6),y:4};
-  const {x,y}=pos;ctx.save();ctx.fillStyle='rgba(255,255,255,.97)';ctx.strokeStyle='#d0d5dd';ctx.lineWidth=Math.max(1,w/1400);ctx.beginPath();ctx.roundRect(x,y,bw,bh,6);ctx.fill();ctx.stroke();
-  const ix=x+7,iy=y+6,is=18;ctx.beginPath();ctx.moveTo(ix,iy);ctx.lineTo(ix+is*.9,iy+is*.5);ctx.lineTo(ix,iy+is);ctx.closePath();ctx.fillStyle='#34a853';ctx.fill();
-  ctx.beginPath();ctx.moveTo(ix,iy);ctx.lineTo(ix+is*.48,iy+is*.5);ctx.lineTo(ix+is*.68,iy+is*.32);ctx.closePath();ctx.fillStyle='#4285f4';ctx.fill();
-  ctx.beginPath();ctx.moveTo(ix+is*.48,iy+is*.5);ctx.lineTo(ix+is*.9,iy+is*.5);ctx.lineTo(ix+is*.68,iy+is*.68);ctx.closePath();ctx.fillStyle='#fbbc04';ctx.fill();
-  ctx.beginPath();ctx.moveTo(ix,iy+is);ctx.lineTo(ix+is*.48,iy+is*.5);ctx.lineTo(ix+is*.68,iy+is*.68);ctx.closePath();ctx.fillStyle='#ea4335';ctx.fill();ctx.restore();
-  return {x,y,w:bw,h:bh,url};
-}
-function findBottomBlankBand(ctx,w,h,minHeight){
-  let count=0;const x0=Math.round(w*.035),x1=Math.round(w*.965);
-  for(let y=h-3;y>=Math.max(0,h-Math.round(h*.16));y-=2){
-    if(rowInkRatio(ctx,y,x0,x1,w)<.008)count+=2;else break;
-  }
-  return count>=minHeight?{x:Math.round(w*.045),y:h-count+2,w:Math.round(w*.91),h:count-2}:null;
-}
-function drawTestSeriesFooter(ctx,w,h){
-  const name=$('testSeriesName').value.trim(),url=$('testSeriesUrl').value.trim(),telegramUrl=$('telegramUrl').value.trim();
-  if(!name||!url||!/^https:\/\//i.test(url))return null;
-  if(telegramUrl&&!/^https:\/\//i.test(telegramUrl))return null;
-  const band=findBottomBlankBand(ctx,w,h,Math.max(76,Math.round(w*.085)));if(!band)return null;
-  const bw=Math.round(band.w*.86),x=band.x+(band.w-bw)/2,y=band.y+2,bh=Math.max(70,band.h-4);
-  ctx.save();
-  const grad=ctx.createLinearGradient(x,y,x+bw,y+bh);grad.addColorStop(0,'#7B2D8E');grad.addColorStop(.52,'#48206F');grad.addColorStop(1,'#21134F');
-  ctx.fillStyle=grad;ctx.beginPath();ctx.roundRect(x,y,bw,bh,Math.max(5,bh*.12));ctx.fill();
-  ctx.fillStyle='#F4C542';ctx.fillRect(x,y,Math.max(3,bw*.006),bh);
-  const pad=Math.max(5,bw*.008),ctaW=Math.min(bw*.22,Math.max(100,bw*.20)),ctaH=Math.min(bh*.43,34);
-  const titleY=y+bh*.30,telegramY=y+bh*.76;
-  const titlePx=Math.max(10,Math.min(48,Number($('footerTitleSize').value)||24));
-  const ctaPx=Math.max(8,Math.min(30,Number($('footerCtaSize').value)||15));
-  const telegramPx=Math.max(8,Math.min(32,Number($('footerTelegramTextSize').value)||18));
-  const iconPx=Math.max(12,Math.min(48,Number($('footerTelegramIconSize').value)||30));
-  // Series name and CTA share one horizontal, center-aligned row.
-  const bxDummy=0,by=y+bh*.10;
-  ctx.textAlign='left';ctx.textBaseline='middle';ctx.font=`800 ${titlePx}px Arial`;ctx.fillStyle='#FFFFFF';
-  const titleMax=bw-2*pad-ctaW-16;let display=name;
-  while(ctx.measureText(display).width>titleMax&&display.length>8)display=display.slice(0,-4)+'…';
-  const titleW=Math.min(ctx.measureText(display).width,titleMax),groupW=titleW+12+ctaW;
-  const groupX=x+(bw-groupW)/2,titleX=groupX;
-  const bx=groupX+titleW+12;ctx.fillText(display,titleX,titleY,titleMax);
-  ctx.fillStyle='#F4C542';ctx.beginPath();ctx.roundRect(bx,by,ctaW,ctaH,ctaH/2);ctx.fill();
-  ctx.textAlign='center';ctx.font=`800 ${ctaPx}px Arial`;ctx.fillStyle='#28134F';ctx.fillText('ENROLL NOW',bx+ctaW/2,by+ctaH/2,ctaW-10);
-  let telegramLink=null;
-  if(telegramUrl){
-    const phrase='Join our Telegram channel to get the latest exam updates and notifications instantly!';
-    ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle='#FFFFFF';
-    const available=bw-2*pad;
-    const iconSize=Math.min(iconPx,Math.max(12,bh*.42));
-    const gap=Math.max(4,iconSize*.16),maxTextW=available-iconSize-gap;
-    // Fit the invitation and Telegram mark as one centered group; reduce excess side spacing.
-    let actualTextPx=Math.min(telegramPx,Math.max(8,Math.floor(bh*.28)));
-    ctx.font=`700 ${actualTextPx}px Arial`;
-    while(ctx.measureText(phrase).width>maxTextW&&actualTextPx>8){actualTextPx--;ctx.font=`700 ${actualTextPx}px Arial`;}
-    const measured=Math.min(ctx.measureText(phrase).width,maxTextW);
-    const groupW=measured+gap+iconSize,textX=x+(bw-groupW)/2;
-    ctx.fillText(phrase,textX,telegramY,maxTextW);
-    const ix=textX+measured+gap,iy=telegramY-iconSize/2;
-    // Telegram logo: blue circular badge with a recognizable white paper-plane mark.
-    ctx.beginPath();ctx.arc(ix+iconSize/2,iy+iconSize/2,iconSize/2,0,Math.PI*2);ctx.fillStyle='#229ED9';ctx.fill();
-    ctx.save();ctx.translate(ix,iy);ctx.scale(iconSize,iconSize);
-    ctx.beginPath();
-    ctx.moveTo(.19,.48);ctx.lineTo(.79,.25);ctx.quadraticCurveTo(.84,.23,.81,.31);
-    ctx.lineTo(.69,.76);ctx.quadraticCurveTo(.67,.83,.61,.78);
-    ctx.lineTo(.45,.65);ctx.lineTo(.37,.73);ctx.quadraticCurveTo(.34,.76,.34,.71);
-    ctx.lineTo(.36,.57);ctx.lineTo(.67,.35);ctx.quadraticCurveTo(.70,.33,.66,.36);
-    ctx.lineTo(.29,.55);ctx.lineTo(.20,.51);ctx.quadraticCurveTo(.15,.49,.19,.48);
-    ctx.closePath();ctx.fillStyle='#FFFFFF';ctx.fill();
-    ctx.restore();
-    telegramLink={x:textX,y:Math.min(iy,telegramY-actualTextPx/2),w:Math.min(available,measured+gap+iconSize),h:Math.max(iconSize,actualTextPx)+6,url:telegramUrl};
-  }
-  ctx.restore();
-  return {links:[{x:bx,y:by,w:ctaW,h:ctaH,url},...(telegramLink?[telegramLink]:[])]};
-}
 async function processPdf(file,coverBytes,logoBytes){
   const {PDFDocument}=PDFLib;const original=await PDFDocument.load(await file.arrayBuffer());const originalPages=original.getPages();
   if(!originalPages.length)throw Error('PDF has no pages');
@@ -203,27 +87,14 @@ async function processPdf(file,coverBytes,logoBytes){
   try{
     for(let i=0;i<originalPages.length;i++){
       const sourceSize=originalPages[i].getSize();const outPage=out.addPage([sourceSize.width,sourceSize.height]);
-      if(i===0){
-        const coverCanvas=document.createElement('canvas');coverCanvas.width=W;coverCanvas.height=H;const coverCtx=coverCanvas.getContext('2d');
-        coverCtx.drawImage(await createImageBitmap(new Blob([coverBytes],{type:'image/png'})),0,0,W,H);
-        const coverBadge=drawPlayStoreBadge(coverCtx,coverCanvas.width,coverCanvas.height);
-        const coverBlob=await new Promise((resolve,reject)=>coverCanvas.toBlob(b=>b?resolve(b):reject(Error('Could not render branded cover')),'image/png'));
-        const coverPng=await out.embedPng(new Uint8Array(await coverBlob.arrayBuffer()));outPage.drawImage(coverPng,{x:0,y:0,width:sourceSize.width,height:sourceSize.height});
-        if(coverBadge){const sx=sourceSize.width/coverCanvas.width,sy=sourceSize.height/coverCanvas.height;addPdfUriLink(outPage,[coverBadge.x*sx,sourceSize.height-(coverBadge.y+coverBadge.h)*sy,(coverBadge.x+coverBadge.w)*sx,sourceSize.height-coverBadge.y*sy],coverBadge.url);}
-        coverCanvas.width=1;coverCanvas.height=1;continue;
-      }
+      if(i===0){outPage.drawImage(coverImage,{x:0,y:0,width:sourceSize.width,height:sourceSize.height});continue;}
       const pdfPage=await pdfjs.getPage(i+1);const scale=Number(getSetting('renderScale'))||1.6;const viewport=pdfPage.getViewport({scale});
       const canvas=document.createElement('canvas');canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);const ctx=canvas.getContext('2d',{willReadFrequently:true});
       await pdfPage.render({canvasContext:ctx,viewport,background:'rgb(255,255,255)'}).promise;
       removePaleWatermarkPixels(ctx,canvas.width,canvas.height);
       if(String(getSetting('addWatermark')??$('addWatermark').checked)!=='false' && getSetting('addWatermark')!==false)addGuidelyWatermark(ctx,canvas.width,canvas.height,logoImage);
-      const playBadge=drawPlayStoreBadge(ctx,canvas.width,canvas.height);
-      const footerLinks=drawTestSeriesFooter(ctx,canvas.width,canvas.height);
       const pngBlob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Could not render page '+(i+1))),'image/png'));
       const pngBytes=new Uint8Array(await pngBlob.arrayBuffer());const pageImage=await out.embedPng(pngBytes);outPage.drawImage(pageImage,{x:0,y:0,width:sourceSize.width,height:sourceSize.height});
-      const sx=sourceSize.width/canvas.width,sy=sourceSize.height/canvas.height;
-      if(playBadge)addPdfUriLink(outPage,[playBadge.x*sx,sourceSize.height-(playBadge.y+playBadge.h)*sy,(playBadge.x+playBadge.w)*sx,sourceSize.height-playBadge.y*sy],playBadge.url);
-      if(footerLinks)for(const footerLink of footerLinks.links)addPdfUriLink(outPage,[footerLink.x*sx,sourceSize.height-(footerLink.y+footerLink.h)*sy,(footerLink.x+footerLink.w)*sx,sourceSize.height-footerLink.y*sy],footerLink.url);
       canvas.width=1;canvas.height=1;pdfPage.cleanup();$('status').textContent=`Cleaning inner watermark ${i+1}/${originalPages.length}: ${file.name}`;
     }
     return await out.save();
@@ -238,5 +109,5 @@ function bytesToBase64(bytes){let binary='';const chunk=0x8000;for(let i=0;i<byt
 async function uploadFileToDrive(endpoint,secret,folderId,filename,bytes){const payload={secret,folderId,filename,mimeType:'application/pdf',base64:bytesToBase64(bytes)};await fetch(endpoint,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)});}
 $('rowPreview').addEventListener('click',e=>{const b=e.target.closest('.row-preview-btn');if(!b)return;const row=sheetRows[Number(b.dataset.row)];if(!row)return;activeOverrides=rowToOverrides(row);drawCover($('preview'));$('status').textContent=`Previewing sheet row ${Number(b.dataset.row)+1}. The selected row settings will be used for that PDF during processing.`;});
 $('process').addEventListener('click',async()=>{if(!chosen.length&&!sheetRows.length)return;if(!window.PDFLib||!window.JSZip||!window.pdfjsLib){$('status').textContent='A PDF library failed to load. Refresh and check your internet connection.';return}if(!bg.complete||!bg.naturalWidth){$('status').textContent='Cover template is still loading. Refresh and try again.';return}const btn=$('process');btn.disabled=true;$('clear').disabled=true;try{const items=sheetRows.length?sheetRows.map((row,i)=>({row,index:i+1,file:null})):chosen.map((file,i)=>({row:{},index:i+1,file}));if(items.length>1000)throw Error('Maximum supported rows per run is 1000. Split very large sheets into smaller runs.');const logoBytes=await readImageBytes(logo);const zip=new JSZip();const outputs=[];let done=0;const errors=[];for(let i=0;i<items.length;i++){const item=items[i];let f=item.file;try{if(!f&&item.row.pdf_url){$('status').textContent=`Downloading PDF ${i+1}/${items.length} from sheet…`;f=await fetchPdfFromUrl(item.row.pdf_url)}if(!f)throw Error('Missing PDF. Add a working direct/public PDF URL in pdf_url.');activeOverrides=sheetRows.length?rowToOverrides(item.row):{};drawCover($('preview'));const coverBlob=await new Promise((resolve,reject)=>$('preview').toBlob(b=>b?resolve(b):reject(Error('Could not render cover')),'image/png'));const coverBytes=new Uint8Array(await coverBlob.arrayBuffer());$('status').textContent=`Processing ${i+1}/${items.length}: ${f.name}`;const bytes=await processPdf(f,coverBytes,logoBytes);let outName=String(f.name.replace(/\.pdf$/i,'')+'_Guidely.pdf').replace(/[\/:*?"<>|]/g,'_');if(!outName.toLowerCase().endsWith('.pdf'))outName+='.pdf';zip.file(outName,bytes);outputs.push({name:outName,bytes});done++}catch(err){errors.push(`${item.index}. ${item.row.pdf_url||item.file?.name||'Sheet row'}: ${err.message||String(err)}`)}}activeOverrides={};drawCover($('preview'));if(!done)throw Error('No PDFs processed.\n'+errors.join('\n'));$('status').textContent='Creating ZIP…';const blob=await zip.generateAsync({type:'blob'},m=>$('status').textContent='Creating ZIP… '+Math.round(m.percent)+'%');const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Guidely_Bulk_Processed.zip';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),60000);let driveMsg='ZIP downloaded. Drive upload not configured.';const endpoint=$('driveEndpoint').value.trim(),secret=$('driveSecret').value.trim(),folderId=extractDriveFolderId($('outputFolder').value);if(endpoint&&secret&&folderId){let uploaded=0;for(let i=0;i<outputs.length;i++){try{$('status').textContent=`Sending PDF ${i+1}/${outputs.length} to Google Drive…`;await uploadFileToDrive(endpoint,secret,folderId,outputs[i].name,outputs[i].bytes);uploaded++}catch(err){errors.push('Drive upload '+outputs[i].name+': '+err.message)}}driveMsg=`Upload requests sent for ${uploaded}/${outputs.length} file(s). Apps Script uses no-cors mode, so the browser cannot confirm each Drive result; check the target folder.`}$('status').textContent=`Finished: ${done}/${items.length} PDF(s) processed. ZIP downloaded.\n${driveMsg}`+(errors.length?'\nIssues:\n'+errors.join('\n'):'')+'\nNote: each sheet row controls its own cover text. Typography, quality and watermark settings come from the software controls.'}catch(err){$('status').textContent='Error: '+(err.message||String(err))}finally{activeOverrides={};btn.disabled=!(chosen.length||sheetRows.length);$('clear').disabled=false}});
-$('clear').addEventListener('click',()=>{chosen=[];sheetRows=[];$('files').value='';$('csvFile').value='';$('filelist').textContent='';$('sheetUrl').value='';$('outputFolder').value='';$('driveEndpoint').value='';$('driveSecret').value='';$('testSeriesName').value='';$('testSeriesUrl').value='';$('playStoreUrl').value='';$('telegramUrl').value='';$('footerTitleSize').value=24;$('footerCtaSize').value=15;$('footerTelegramTextSize').value=18;$('footerTelegramIconSize').value=30;activeOverrides={};$('status').textContent='Selection cleared.';renderBulkSummary()});drawCover($('preview'));renderBulkSummary();
+$('clear').addEventListener('click',()=>{chosen=[];sheetRows=[];$('files').value='';$('csvFile').value='';$('filelist').textContent='';$('sheetUrl').value='';$('outputFolder').value='';$('driveEndpoint').value='';$('driveSecret').value='';activeOverrides={};$('status').textContent='Selection cleared.';renderBulkSummary()});drawCover($('preview'));renderBulkSummary();
 </script></body></html>

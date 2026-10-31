@@ -4,7 +4,7 @@
 :root{--purple:#4b126e;--magenta:#b60083;--ink:#111827;--muted:#667085;--line:#e4e7ec;--bg:#f7f7fb}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial;color:var(--ink)}.wrap{max-width:1180px;margin:auto;padding:24px 16px 50px}.top{display:flex;gap:14px;align-items:center;margin-bottom:18px}.logo{width:145px;max-height:55px;object-fit:contain;background:white;border-radius:8px;padding:5px}.top h1{font-size:24px;margin:0}.top p{margin:3px 0 0;color:var(--muted)}.notice{padding:12px 14px;background:#fff8e8;border:1px solid #f0d18a;border-radius:10px;color:#6b4a00;font-size:13px;margin-bottom:16px}.layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);gap:18px;align-items:start}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 3px 12px #17255408}.card h2{font-size:16px;margin:0 0 13px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:12px;font-weight:700}.field input,.field select,.field textarea{width:100%;border:1px solid #d0d5dd;border-radius:8px;padding:9px 10px;font:inherit;background:#fff;min-width:0}.field textarea{min-height:54px;resize:vertical}.triple{display:grid;grid-template-columns:minmax(0,1fr) 90px 112px;gap:8px;align-items:end;margin-bottom:10px}.triple label{display:block;font-size:12px;font-weight:650;margin-bottom:5px}.triple input,.triple select{width:100%;border:1px solid #d0d5dd;border-radius:8px;padding:9px;font:inherit}.hint{font-size:12px;color:var(--muted)}table th{background:#f9fafb}#rowPreview table{min-width:520px}.drop{border:2px dashed #c7b9e7;border-radius:10px;background:#fbfaff;padding:16px;text-align:center}.btn{border:0;border-radius:9px;padding:11px 15px;font-weight:750;cursor:pointer;background:var(--purple);color:white}.btn.secondary{background:#f0e8f8;color:var(--purple)}.btn:disabled{opacity:.5;cursor:not-allowed}.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}.status{font-size:12px;color:var(--muted);white-space:pre-wrap}.previewWrap{position:sticky;top:10px}.previewTop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.previewTop h2{margin:0;font-size:17px}.previewFrame{border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px}.previewCanvas{width:100%;height:auto;display:block;border-radius:3px}.check{display:flex;align-items:flex-start;gap:8px;font-size:13px;margin-top:10px}.check input{margin-top:4px}.smallTitle{font-size:13px;font-weight:800;color:#6d28d9;margin:2px 0 10px}.divider{border:0;border-top:1px solid #eee;margin:13px 0}footer{text-align:center;color:var(--muted);font-size:12px;margin-top:18px}@media(max-width:850px){.layout{grid-template-columns:1fr}.previewWrap{position:static}.grid{grid-template-columns:1fr}}@media(max-width:500px){.triple{grid-template-columns:minmax(0,1fr) 76px 90px}.top{align-items:flex-start}.logo{width:95px}.top h1{font-size:20px}}
 </style></head><body><main class="wrap">
 <header class="top"><img class="logo" src="/public/guidely-logo.jpeg" alt="Guidely logo"><div><h1>Guidely PDF Cover & Branding Studio</h1><p>Bulk process exam PDFs from Google Sheets or select a few PDFs manually. Typography, watermark sizing and high-resolution cover rendering stay in the app.</p></div></header>
-<div class="notice"><b>Inner-page watermark cleanup:</b> Bulk mode supports per-row cover settings from Google Sheet/CSV. Inner pages are rasterized, pale cyan/light watermark pixels are cleaned, then one diagonal Guidely watermark is added. This can affect other very light cyan artwork and makes inner-page text non-selectable. Test one PDF first and inspect every page before batch use.</div>
+<div class="notice"><b>Inner-page watermark cleanup:</b> Inner pages are rasterized and the cleanup pass targets faint/translucent multi-colour and grey diagonal watermark patterns before adding the Guidely watermark. Some watermarks may remain, and pale diagonal artwork may be affected. Inspect a sample PDF before batch use; inner-page text becomes non-selectable.</div>
 <div class="layout"><section>
 <div class="card"><h2>1. Bulk input — Google Sheet or manual PDFs</h2>
 <div class="field"><label for="sheetUrl">Google Sheet link (public / viewer access)</label><input id="sheetUrl" placeholder="Paste Google Sheet link or published CSV URL"><div class="hint">Use only these columns in your sheet: <b>pdf_url, title1, title2, year, subtitle, shift, date, time, noticeTitle, noticeBody</b>. Font sizes, font weight, watermark size and quality are controlled below in the software, not in the sheet.</div></div>
@@ -20,7 +20,7 @@
 <div class="card"><h2>3. Exam details box</h2><div class="grid"><div class="field"><label for="date">Exam date</label><input id="date" value="07 May 2026"></div><div class="field"><label for="dateSize">Date font size (px)</label><input id="dateSize" type="number" min="10" max="40" value="22"></div><div class="field"><label for="time">Exam time</label><input id="time" value="9:00 AM – 10:30 AM"></div><div class="field"><label for="timeSize">Time font size (px)</label><input id="timeSize" type="number" min="10" max="40" value="22"></div><div class="field"><label for="subject">Exam / subject</label><input id="subject" value="RRB NTPC (UG) CBT-I"></div><div class="field"><label for="subjectSize">Subject font size (px)</label><input id="subjectSize" type="number" min="10" max="40" value="20"></div></div>
 <hr class="divider"><div class="grid"><div class="field"><label for="noticeTitle">Notice title</label><input id="noticeTitle" value="RRB NTPC (UG) CBT-I"></div><div class="field"><label for="noticeSize">Notice font size (px)</label><input id="noticeSize" type="number" min="10" max="32" value="19"></div><div class="field" style="grid-column:1/-1"><label for="noticeBody">Notice description</label><textarea id="noticeBody">This paper belongs to the recruitment cycle notified under RRB NTPC (UG) CBT-I.</textarea></div></div>
 <div class="grid" style="margin-top:12px"><div class="field"><label for="renderScale">Inner page quality</label><select id="renderScale"><option value="1.25">Standard (smaller PDF)</option><option value="1.6" selected>High (recommended)</option><option value="2">Very high (larger PDF)</option></select></div><div class="field"><label for="watermarkOpacity">Guidely watermark opacity</label><select id="watermarkOpacity"><option value="0.08">Very light (8%)</option><option value="0.12" selected>Light (12%)</option><option value="0.16">Medium (16%)</option></select></div><div class="field"><label for="watermarkScale">Watermark size</label><select id="watermarkScale"><option value="0.22">Small</option><option value="0.30" selected>Medium</option><option value="0.38">Large</option></select></div></div>
-<label class="check"><input id="addWatermark" type="checkbox" checked> Add one diagonal Guidely watermark after removing pale Testbook watermark pixels</label>
+<label class="check"><input id="addWatermark" type="checkbox" checked> Add one diagonal Guidely watermark after the automatic watermark cleanup pass</label>
 </div>
 <div class="card"><h2>4. Process</h2><div class="field"><label for="coverMode">Cover page option</label><select id="coverMode"><option value="replace" selected>Replace existing first page (current behaviour)</option><option value="add">Add a new cover page before the existing PDF</option></select><div class="hint">Choose “Add a new cover page” when the PDF has no cover. The original pages will remain after the new Guidely cover.</div></div><div class="actions"><button class="btn" id="process">Replace first page & download ZIP</button><button class="btn secondary" id="clear">Clear files</button></div><div class="status" id="status" style="margin-top:10px">Select PDF files to begin.</div></div>
 </section><aside class="previewWrap"><div class="card"><div class="previewTop"><h2>Live cover preview</h2><button class="btn secondary" id="downloadPreview">Download cover PNG</button></div><div class="previewFrame"><canvas id="preview" class="previewCanvas" width="663" height="915"></canvas></div><p class="hint">Preview updates as you edit the exam name, shift and font sizes. Use the Process option to replace page 1 or insert this as a new cover before the original PDF pages.</p></div></aside></div>
@@ -71,18 +71,50 @@ $('downloadCsvTemplate').addEventListener('click',()=>{const csv='pdf_url,title1
 $('downloadPreview').addEventListener('click',()=>{drawCover($('preview'));$('preview').toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Guidely_Custom_Cover_HighRes.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),30000)},'image/png')});
 async function readImageBytes(img){const r=await fetch(img.src);if(!r.ok)throw Error('Could not load '+img.src);return new Uint8Array(await r.arrayBuffer())}
 function removePaleWatermarkPixels(ctx,w,h){
-  const im=ctx.getImageData(0,0,w,h),d=im.data;
-  for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2],a=d[i+3];if(!a)continue;
-    // Testbook's diagonal watermark is pale cyan. Mask only very light cyan pixels,
-    // plus near-white neutral pixels that can form the faint gray portion of its logo.
+  // Enhanced cleanup for faint/translucent watermarks in different colours.
+  // It deliberately targets light, low-opacity pixels that form diagonal strokes;
+  // dark question text and most solid diagrams are left intact.
+  const im=ctx.getImageData(0,0,w,h),d=im.data,pixels=w*h;
+  const candidate=new Uint8Array(pixels);
+  const luminance=new Uint8Array(pixels);
+  for(let p=0,i=0;p<pixels;p++,i+=4){
+    const r=d[i],g=d[i+1],b=d[i+2],max=Math.max(r,g,b),min=Math.min(r,g,b);
+    const lum=Math.round(.299*r+.587*g+.114*b),sat=max-min;
+    luminance[p]=lum;
     const paleCyan=(r>145&&g>180&&b>190&&(g-r)>8&&(b-r)>10&&Math.abs(g-b)<65);
-    if(paleCyan){d[i]=255;d[i+1]=255;d[i+2]=255;continue;}
-    // The gray/cyan Testbook icon sits in the lower-left part of the diagonal watermark.
-    // Limit neutral-gray cleanup to that logo zone to avoid erasing page borders elsewhere.
-    const x=(i/4)%w,y=Math.floor((i/4)/w),normX=x/w,normY=y/h;
-    const watermarkLogoZone=normX>0.12&&normX<0.48&&normY>0.56&&normY<0.84;
-    const faintNeutral=watermarkLogoZone&&r>195&&g>195&&b>195&&Math.max(r,g,b)-Math.min(r,g,b)<18;
-    if(faintNeutral){d[i]=255;d[i+1]=255;d[i+2]=255;}
+    // Soft coloured/grey marks are common for semi-transparent diagonal watermarks.
+    const softColour=lum>132&&lum<248&&sat>=12&&sat<=175;
+    const softGrey=lum>158&&lum<232&&sat<13;
+    if(paleCyan||softColour||softGrey)candidate[p]=1;
+  }
+  // A watermark character's strokes remain aligned along a diagonal after rotation.
+  // Require nearby candidate pixels on the same diagonal before removing a pixel.
+  const remove=new Uint8Array(pixels);
+  const dirs=[[1,1],[1,-1]];
+  for(let y=2;y<h-2;y++){
+    for(let x=2;x<w-2;x++){
+      const p=y*w+x;if(!candidate[p])continue;
+      let supported=false;
+      for(const [dx,dy] of dirs){
+        let count=0;
+        for(const sign of [-1,1]){
+          for(const step of [2,4,6,8,10,12]){
+            const xx=x+dx*step*sign,yy=y+dy*step*sign;
+            if(xx<0||xx>=w||yy<0||yy>=h)continue;
+            if(candidate[yy*w+xx])count++;
+          }
+        }
+        if(count>=3){supported=true;break;}
+      }
+      if(supported)remove[p]=1;
+    }
+  }
+  for(let p=0,i=0;p<pixels;p++,i+=4){
+    if(remove[p]){
+      // Keep the page's light background rather than introducing a coloured patch.
+      const v=Math.max(248,luminance[p]);
+      d[i]=255;d[i+1]=255;d[i+2]=255;d[i+3]=255;
+    }
   }
   ctx.putImageData(im,0,0);
 }

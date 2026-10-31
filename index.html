@@ -10,24 +10,32 @@
 <div class="field"><label for="sheetUrl">Google Sheet link (public / viewer access)</label><input id="sheetUrl" placeholder="Paste Google Sheet link or published CSV URL"><div class="hint">Use only these columns in your sheet: <b>pdf_url, title1, title2, year, subtitle, shift, date, time, noticeTitle, noticeBody</b>. Font sizes, font weight, watermark size and quality are controlled below in the software, not in the sheet.</div></div>
 <div class="actions"><button class="btn secondary" id="loadSheet">Load sheet rows</button><button class="btn secondary" id="downloadCsvTemplate">Download sheet CSV template</button><label class="btn secondary" for="csvFile" style="display:inline-flex;align-items:center;cursor:pointer">Import CSV file</label><input id="csvFile" type="file" accept=".csv,text/csv" style="display:none"></div>
 <hr class="divider"><div class="drop"><b>Manual mode — select 1–2 PDFs</b><br><input id="files" type="file" accept="application/pdf,.pdf" multiple><div class="hint">Manual mode uses the settings currently entered in this page. For different details per PDF, process one at a time or use one Google Sheet row per PDF. Browser processing does not upload source files to Vercel.</div></div><div id="filelist" class="hint" style="margin-top:8px"></div><div class="field" style="margin-top:12px"><label for="outputFolder">Google Drive output folder link (optional)</label><input id="outputFolder" placeholder="https://drive.google.com/drive/folders/…"><div class="hint">Used with the Apps Script connector for source Drive downloads and optional output uploads. A folder link alone cannot grant permission.</div></div><div class="grid" style="margin-top:10px"><div class="field"><label for="driveEndpoint">Apps Script Web App URL (for Drive input + output)</label><input id="driveEndpoint" value="https://script.google.com/macros/s/AKfycbxRcNGjEfd4FcE6hQaf1BtD5jmVyCNU005BZIrNUwxiE6cWS_wBfa_6j0fH9GmeNHB81g/exec" placeholder="https://script.google.com/macros/s/…/exec"></div><div class="field"><label for="driveSecret">Drive connector secret</label><input id="driveSecret" type="password" placeholder="Enter once; saved in this browser"></div></div><div class="hint">For Google Drive source links, deploy the included Apps Script, set the same secret, and enter its Web App URL + secret here. Direct CDN links still require browser-accessible CORS. ZIP download always remains available; output-folder upload is optional.</div><div id="sheetSummary" class="hint" style="margin-top:8px">No sheet rows loaded yet.</div><div id="rowPreview" style="overflow:auto;max-height:240px;margin-top:10px"></div></div>
-<div class="card"><h2>2. Exam title and typography</h2><div class="smallTitle">Main exam title — enter any exam name</div>
+<div class="card"><h2>2. Processing mode</h2>
+<div class="field"><label for="processingMode">Choose what you want to do</label><select id="processingMode"><option value="fixedCover" selected>Replace watermark + use existing Guidely cover template</option><option value="watermarkOnly">Only replace watermark — do not add or change any cover page</option><option value="manualCover">Replace watermark + create a custom cover page</option></select><div class="hint">Watermark-only mode preserves all original pages and only cleans the watermark/adds Guidely watermark. Custom-cover mode opens the manual template builder below.</div></div>
+<div id="manualTemplateBuilder" class="card" style="display:none;margin:14px 0 0;background:#fbfaff;border-color:#d8c8ef"><h2>Manual cover template builder</h2><p class="hint">Create your own cover instead of using the fixed Guidely template. The text fields in the next sections become your editable cover content.</p>
+<div class="grid"><div class="field"><label for="customCoverBg">Upload background image (optional)</label><input id="customCoverBg" type="file" accept="image/png,image/jpeg,image/webp"><div class="hint">If no image is uploaded, the selected background colour is used.</div></div><div class="field"><label for="customCoverColor">Background colour</label><input id="customCoverColor" type="color" value="#ffffff" style="height:42px;padding:4px"></div><div class="field"><label for="customTextColor">Text colour</label><input id="customTextColor" type="color" value="#24113b" style="height:42px;padding:4px"></div><div class="field"><label for="customAccentColor">Accent colour</label><input id="customAccentColor" type="color" value="#4b126e" style="height:42px;padding:4px"></div></div>
+<div class="hint" style="margin-top:10px">Layout: title, year and paper details are centered on your custom background. You can edit all text, font sizes and weights in the sections below. Use Live cover preview to check the result.</div></div></div>
+<div class="card" id="coverTypographyCard"><h2>3. Exam title and typography</h2><div class="smallTitle">Main exam title — enter any exam name</div>
 <div class="triple"><div><label for="title1">Exam name (line 1)</label><input id="title1" value="RRB NTPC" /></div><div><label for="title1size">Font px</label><input id="title1size" type="number" min="12" max="120" value="48"></div><div><label for="title1weight">Weight</label><select id="title1weight"><option value="700" selected>Bold</option><option value="500">Medium</option><option value="800">Extra bold</option></select></div></div>
 <div class="triple"><div><label for="title2">Exam name (line 2)</label><input id="title2" value="(UG) CBT-I" /></div><div><label for="title2size">Font px</label><input id="title2size" type="number" min="12" max="120" value="36"></div><div><label for="title2weight">Weight</label><select id="title2weight"><option value="700" selected>Bold</option><option value="500">Medium</option><option value="800">Extra bold</option></select></div></div>
 <div class="triple"><div><label for="year">Year banner</label><input id="year" value="2026" /></div><div><label for="yearSize">Font px</label><input id="yearSize" type="number" min="12" max="100" value="46"></div><div><label for="yearWeight">Weight</label><select id="yearWeight"><option value="800" selected>Extra bold</option><option value="700">Bold</option><option value="500">Medium</option></select></div></div>
 <div class="triple"><div><label for="subtitle">Paper title</label><input id="subtitle" value="PREVIOUS YEAR PAPER" /></div><div><label for="subtitleSize">Font px</label><input id="subtitleSize" type="number" min="10" max="60" value="29"></div><div><label for="subtitleWeight">Weight</label><select id="subtitleWeight"><option value="800" selected>Extra bold</option><option value="700">Bold</option><option value="500">Medium</option></select></div></div>
 <div class="triple"><div><label for="shift">Shift / session</label><input id="shift" value="SHIFT 1" /></div><div><label for="shiftSize">Font px</label><input id="shiftSize" type="number" min="10" max="50" value="25"></div><div><label for="shiftWeight">Weight</label><select id="shiftWeight"><option value="800" selected>Extra bold</option><option value="700">Bold</option><option value="500">Medium</option></select></div></div>
 </div>
-<div class="card"><h2>3. Exam details box</h2><div class="grid"><div class="field"><label for="date">Exam date</label><input id="date" value="07 May 2026"></div><div class="field"><label for="dateSize">Date font size (px)</label><input id="dateSize" type="number" min="10" max="40" value="22"></div><div class="field"><label for="time">Exam time</label><input id="time" value="9:00 AM – 10:30 AM"></div><div class="field"><label for="timeSize">Time font size (px)</label><input id="timeSize" type="number" min="10" max="40" value="22"></div><div class="field"><label for="subject">Exam / subject</label><input id="subject" value="RRB NTPC (UG) CBT-I"></div><div class="field"><label for="subjectSize">Subject font size (px)</label><input id="subjectSize" type="number" min="10" max="40" value="20"></div></div>
+<div class="card" id="examDetailsCard"><h2>4. Exam details box</h2><div class="grid"><div class="field"><label for="date">Exam date</label><input id="date" value="07 May 2026"></div><div class="field"><label for="dateSize">Date font size (px)</label><input id="dateSize" type="number" min="10" max="40" value="22"></div><div class="field"><label for="time">Exam time</label><input id="time" value="9:00 AM – 10:30 AM"></div><div class="field"><label for="timeSize">Time font size (px)</label><input id="timeSize" type="number" min="10" max="40" value="22"></div><div class="field"><label for="subject">Exam / subject</label><input id="subject" value="RRB NTPC (UG) CBT-I"></div><div class="field"><label for="subjectSize">Subject font size (px)</label><input id="subjectSize" type="number" min="10" max="40" value="20"></div></div>
 <hr class="divider"><div class="grid"><div class="field"><label for="noticeTitle">Notice title</label><input id="noticeTitle" value="RRB NTPC (UG) CBT-I"></div><div class="field"><label for="noticeSize">Notice font size (px)</label><input id="noticeSize" type="number" min="10" max="32" value="19"></div><div class="field" style="grid-column:1/-1"><label for="noticeBody">Notice description</label><textarea id="noticeBody">This paper belongs to the recruitment cycle notified under RRB NTPC (UG) CBT-I.</textarea></div></div>
-<div class="grid" style="margin-top:12px"><div class="field"><label for="renderScale">Inner page quality</label><select id="renderScale"><option value="1.25">Standard (smaller PDF)</option><option value="1.6" selected>High (recommended)</option><option value="2">Very high (larger PDF)</option></select></div><div class="field"><label for="watermarkOpacity">Guidely watermark opacity</label><select id="watermarkOpacity"><option value="0.08">Very light (8%)</option><option value="0.12" selected>Light (12%)</option><option value="0.16">Medium (16%)</option></select></div><div class="field"><label for="watermarkScale">Watermark size</label><select id="watermarkScale"><option value="0.22">Small</option><option value="0.30" selected>Medium</option><option value="0.38">Large</option></select></div></div>
+<div class="grid" style="margin-top:12px"><div class="field"><label for="renderScale">Inner page quality</label><select id="renderScale"><option value="2">High (larger PDF)</option><option value="2.5" selected>Very high (recommended)</option><option value="3">Maximum clarity (largest PDF)</option></select></div><div class="field"><label for="watermarkOpacity">Guidely watermark opacity</label><select id="watermarkOpacity"><option value="0.08">Very light (8%)</option><option value="0.12" selected>Light (12%)</option><option value="0.16">Medium (16%)</option></select></div><div class="field"><label for="watermarkScale">Watermark size</label><select id="watermarkScale"><option value="0.22">Small</option><option value="0.30" selected>Medium</option><option value="0.38">Large</option></select></div></div>
 <label class="check"><input id="addWatermark" type="checkbox" checked> Add one diagonal Guidely watermark after the automatic watermark cleanup pass</label>
 </div>
-<div class="card"><h2>4. Process</h2><div class="field"><label for="coverMode">Cover page option</label><select id="coverMode"><option value="replace" selected>Replace existing first page (current behaviour)</option><option value="add">Add a new cover page before the existing PDF</option></select><div class="hint">Choose “Add a new cover page” when the PDF has no cover. The original pages will remain after the new Guidely cover.</div></div><div class="actions"><button class="btn" id="process">Replace first page & download ZIP</button><button class="btn secondary" id="clear">Clear files</button></div><div class="status" id="status" style="margin-top:10px">Select PDF files to begin.</div></div>
+<div class="card"><h2>5. Process</h2><div class="field"><label for="coverMode">Cover page option</label><select id="coverMode"><option value="replace" selected>Replace existing first page (current behaviour)</option><option value="add">Add a new cover page before the existing PDF</option></select><div class="hint">Choose “Add a new cover page” when the PDF has no cover. The original pages will remain after the new Guidely cover.</div></div><div class="actions"><button class="btn" id="process">Replace first page & download ZIP</button><button class="btn secondary" id="clear">Clear files</button></div><div class="status" id="status" style="margin-top:10px">Select PDF files to begin.</div></div>
 </section><aside class="previewWrap"><div class="card"><div class="previewTop"><h2>Live cover preview</h2><button class="btn secondary" id="downloadPreview">Download cover PNG</button></div><div class="previewFrame"><canvas id="preview" class="previewCanvas" width="663" height="915"></canvas></div><p class="hint">Preview updates as you edit the exam name, shift and font sizes. Use the Process option to replace page 1 or insert this as a new cover before the original PDF pages.</p></div></aside></div>
 <footer>Guidely PDF Cover & Branding Studio · Browser-side processing · Use only on files you are authorized to modify.</footer></main>
 <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);let chosen=[];let sheetRows=[];let activeOverrides={};const W=663,H=915,COVER_SCALE=2;const bg=new Image();bg.src='/public/guidely-cover-template.png';const logo=new Image();logo.src='/public/guidely-logo.jpeg';if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';}
+let customBgImage=null;
+function drawManualCover(canvas){canvas.width=W*COVER_SCALE;canvas.height=H*COVER_SCALE;const ctx=canvas.getContext('2d');ctx.setTransform(COVER_SCALE,0,0,COVER_SCALE,0,0);const bgColor=$('customCoverColor')?.value||'#ffffff',textColor=$('customTextColor')?.value||'#24113b',accent=$('customAccentColor')?.value||'#4b126e';ctx.fillStyle=bgColor;ctx.fillRect(0,0,W,H);if(customBgImage){const ratio=Math.max(W/customBgImage.width,H/customBgImage.height),iw=customBgImage.width*ratio,ih=customBgImage.height*ratio;ctx.drawImage(customBgImage,(W-iw)/2,(H-ih)/2,iw,ih);ctx.fillStyle='rgba(255,255,255,.72)';ctx.fillRect(0,0,W,H);}ctx.fillStyle=accent;ctx.fillRect(0,0,W,18);ctx.fillRect(0,H-18,W,18);ctx.textAlign='center';ctx.textBaseline='middle';drawCentered(ctx,val('title1'),W/2,175,590,n('title1size',48),val('title1weight')||'700',textColor);drawCentered(ctx,val('title2'),W/2,235,590,n('title2size',36),val('title2weight')||'700',textColor);roundedRect(ctx,175,300,313,72,16,accent,null);drawCentered(ctx,val('year'),W/2,336,280,n('yearSize',46),val('yearWeight')||'800','#ffffff');drawCentered(ctx,val('subtitle'),W/2,435,570,n('subtitleSize',29),val('subtitleWeight')||'800',textColor);roundedRect(ctx,170,490,323,58,12,accent,null);drawCentered(ctx,val('shift'),W/2,519,300,n('shiftSize',25),val('shiftWeight')||'800','#ffffff');drawCentered(ctx,val('date'),W/2,620,560,n('dateSize',22),'700',textColor);drawCentered(ctx,val('time'),W/2,670,560,n('timeSize',22),'700',textColor);drawCentered(ctx,val('subject'),W/2,725,560,n('subjectSize',20),'700',textColor);drawCentered(ctx,val('noticeTitle'),W/2,800,560,n('noticeSize',19),'800',accent);ctx.font='500 15px Arial';ctx.fillStyle=textColor;ctx.textAlign='center';wrapText(ctx,val('noticeBody'),W/2,832,540,19,3);}
+function drawActiveCover(canvas){if(getProcessingMode()==='manualCover')drawManualCover(canvas);else drawCover(canvas);}
 const textIds=['title1','title2','title1size','title2size','title1weight','title2weight','year','yearSize','yearWeight','subtitle','subtitleSize','subtitleWeight','shift','shiftSize','shiftWeight','date','dateSize','time','timeSize','subject','subjectSize','noticeTitle','noticeSize','noticeBody'];
 function val(id){const v=activeOverrides[id]!==undefined&&activeOverrides[id]!==''?activeOverrides[id]:$(id).value;return String(v??'').trim()}function n(id,def){const raw=activeOverrides[id]!==undefined&&activeOverrides[id]!==''?activeOverrides[id]:$(id).value;const v=Number(raw);return Number.isFinite(v)&&v>0?v:def}function getSetting(id){if(activeOverrides[id]!==undefined&&activeOverrides[id]!=='')return activeOverrides[id];const el=$(id);return el.type==='checkbox'?el.checked:el.value}function fitFont(ctx,text,maxPx,minPx,maxWidth,weight){let s=maxPx;ctx.font=`${weight} ${s}px Arial, sans-serif`;while(ctx.measureText(text).width>maxWidth&&s>minPx){s-=1;ctx.font=`${weight} ${s}px Arial, sans-serif`}return s}
 function drawCentered(ctx,text,x,y,maxW,size,weight,color){if(!text)return;const s=fitFont(ctx,text,size,10,maxW,weight);ctx.font=`${weight} ${s}px Arial, sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=color;ctx.fillText(text,x,y,maxW)}
@@ -43,7 +51,7 @@ drawCentered(ctx,val('year'),335,238,250,n('yearSize',46),val('yearWeight')||'80
 ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle='#111827';ctx.font=`700 ${n('dateSize',22)}px Arial`;ctx.fillText(val('date'),144,498,265);ctx.font=`700 ${n('timeSize',22)}px Arial`;ctx.fillText(val('time'),144,560,265);ctx.font=`700 ${n('subjectSize',20)}px Arial`;ctx.fillText(val('subject')||[val('title1'),val('title2')].filter(Boolean).join(' '),144,632,280);
 // Notice area
 ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle='#111827';const nt=val('noticeTitle');ctx.font=`800 ${n('noticeSize',19)}px Arial`;ctx.fillText(nt,151,719,350);ctx.font='500 17px Arial';const body=val('noticeBody');const words=body.split(/\s+/);let lines=[],line='';for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>350&&line){lines.push(line);line=word}else line=test}if(line)lines.push(line);lines.slice(0,2).forEach((l,i)=>ctx.fillText(l,151,746+i*22,350));}
-textIds.forEach(id=>$(id).addEventListener('input',()=>drawCover($('preview'))));['title1weight','title2weight','yearWeight','subtitleWeight','shiftWeight'].forEach(id=>$(id).addEventListener('change',()=>drawCover($('preview'))));
+textIds.forEach(id=>$(id).addEventListener('input',()=>drawActiveCover($('preview'))));['title1weight','title2weight','yearWeight','subtitleWeight','shiftWeight'].forEach(id=>$(id).addEventListener('change',()=>drawActiveCover($('preview'))));
 bg.onload=()=>drawCover($('preview'));bg.onerror=()=>{$('status').textContent='Cover template image could not load. Check public/guidely-cover-template.png.'};
 function renderBulkSummary(){
  $('filelist').textContent=chosen.length?`${chosen.length} local PDF(s) selected.`:'No local PDFs selected.';
@@ -51,7 +59,7 @@ function renderBulkSummary(){
  const rows=sheetRows.slice(0,100);$('rowPreview').innerHTML=rows.length?'<div class="hint" style="margin-bottom:6px">Click Preview on any row to inspect its cover before processing. Showing up to 100 rows.</div><table style="border-collapse:collapse;width:100%;font-size:12px"><thead><tr>'+['#','PDF URL','Title 1','Shift','Date','Preview'].map(x=>`<th style="border:1px solid #e4e7ec;padding:5px;text-align:left">${x}</th>`).join('')+'</tr></thead><tbody>'+rows.map((r,i)=>`<tr><td style="border:1px solid #e4e7ec;padding:5px">${i+1}</td><td style="border:1px solid #e4e7ec;padding:5px;max-width:180px;overflow-wrap:anywhere">${escapeHtml(r.pdf_url||'')}</td><td style="border:1px solid #e4e7ec;padding:5px">${escapeHtml(r.title1||'')}</td><td style="border:1px solid #e4e7ec;padding:5px">${escapeHtml(r.shift||'')}</td><td style="border:1px solid #e4e7ec;padding:5px">${escapeHtml(r.date||'')}</td><td style="border:1px solid #e4e7ec;padding:5px"><button type="button" class="btn secondary row-preview-btn" data-row="${i}" style="padding:5px 8px">Preview</button></td></tr>`).join('')+'</tbody></table>':'<span class="hint">Loaded rows preview will appear here.</span>';
  $('process').disabled=!(chosen.length||sheetRows.length);
 }
-textIds.forEach(id=>$(id).addEventListener('input',()=>drawCover($('preview'))));['title1weight','title2weight','yearWeight','subtitleWeight','shiftWeight'].forEach(id=>$(id).addEventListener('change',()=>drawCover($('preview'))));
+textIds.forEach(id=>$(id).addEventListener('input',()=>drawActiveCover($('preview'))));['title1weight','title2weight','yearWeight','subtitleWeight','shiftWeight'].forEach(id=>$(id).addEventListener('change',()=>drawActiveCover($('preview'))));
 window.addEventListener('load',()=>drawCover($('preview')));bg.onload=()=>drawCover($('preview'));bg.onerror=()=>{$('status').textContent='Cover template image could not load. Check public/guidely-cover-template.png.'};logo.onload=()=>drawCover($('preview'));
 function renderBulkSummary(){
  $('filelist').textContent=chosen.length?`${chosen.length} local PDF(s) selected.`:'No local PDFs selected.';
@@ -68,31 +76,27 @@ $('files').addEventListener('change',e=>{chosen=Array.from(e.target.files||[]);$
 $('csvFile').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{await loadCsvText(await f.text())}catch(err){$('status').textContent='CSV import failed: '+err.message}});
 $('loadSheet').addEventListener('click',async()=>{const url=normalizeSheetUrl($('sheetUrl').value);if(!url){$('status').textContent='Paste a Google Sheet link or CSV URL first.';return}try{$('status').textContent='Loading sheet CSV…';const res=await fetch(url);if(!res.ok)throw Error('HTTP '+res.status+'. Check that the sheet is shared/published and the link exports CSV.');const text=await res.text();if(!text.includes(',')||text.trim().startsWith('<!DOCTYPE'))throw Error('This link did not return CSV. Use File → Share/Publish to web and provide a CSV export link.');await loadCsvText(text)}catch(err){$('status').textContent='Could not load sheet: '+err.message+'\nBrowser security (CORS) can block normal Google Drive/Sheets links. Try a published CSV URL or import the CSV file instead.'}});
 $('downloadCsvTemplate').addEventListener('click',()=>{const csv='pdf_url,title1,title2,year,subtitle,shift,date,time,noticeTitle,noticeBody\nhttps://example.com/sample.pdf,RRB NTPC,(UG) CBT-I,2026,PREVIOUS YEAR PAPER,SHIFT 1,07 May 2026,9:00 AM - 10:30 AM,RRB NTPC (UG) CBT-I,This paper belongs to the recruitment cycle notified under RRB NTPC (UG) CBT-I.';const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Guidely_Bulk_Sheet_Template.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),10000)});
-$('downloadPreview').addEventListener('click',()=>{drawCover($('preview'));$('preview').toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Guidely_Custom_Cover_HighRes.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),30000)},'image/png')});
+$('downloadPreview').addEventListener('click',()=>{drawActiveCover($('preview'));$('preview').toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Guidely_Custom_Cover_HighRes.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),30000)},'image/png')});
 async function readImageBytes(img){const r=await fetch(img.src);if(!r.ok)throw Error('Could not load '+img.src);return new Uint8Array(await r.arrayBuffer())}
 function removePaleWatermarkPixels(ctx,w,h){
-  // Enhanced cleanup for faint/translucent watermarks in different colours.
-  // It deliberately targets light, low-opacity pixels that form diagonal strokes;
-  // dark question text and most solid diagrams are left intact.
+  // Multi-colour cleanup: target low-opacity diagonal watermark strokes while
+  // preserving dark body text and saturated headings as much as possible.
   const im=ctx.getImageData(0,0,w,h),d=im.data,pixels=w*h;
-  const candidate=new Uint8Array(pixels);
-  const luminance=new Uint8Array(pixels);
+  const candidate=new Uint8Array(pixels), luminance=new Uint8Array(pixels);
   for(let p=0,i=0;p<pixels;p++,i+=4){
     const r=d[i],g=d[i+1],b=d[i+2],max=Math.max(r,g,b),min=Math.min(r,g,b);
     const lum=Math.round(.299*r+.587*g+.114*b),sat=max-min;
     luminance[p]=lum;
     const paleCyan=(r>145&&g>180&&b>190&&(g-r)>8&&(b-r)>10&&Math.abs(g-b)<65);
-    // Soft coloured/grey marks are common for semi-transparent diagonal watermarks.
     const softColour=lum>132&&lum<248&&sat>=12&&sat<=175;
     const softGrey=lum>158&&lum<232&&sat<13;
     if(paleCyan||softColour||softGrey)candidate[p]=1;
   }
-  // A watermark character's strokes remain aligned along a diagonal after rotation.
-  // Require nearby candidate pixels on the same diagonal before removing a pixel.
+  // Include common diagonal watermark angles, not only 45 degrees.
+  const dirs=[[1,1],[1,-1],[2,1],[2,-1],[3,2],[3,-2],[1,2],[1,-2],[2,3],[2,-3]];
   const remove=new Uint8Array(pixels);
-  const dirs=[[1,1],[1,-1]];
-  for(let y=2;y<h-2;y++){
-    for(let x=2;x<w-2;x++){
+  for(let y=3;y<h-3;y++){
+    for(let x=3;x<w-3;x++){
       const p=y*w+x;if(!candidate[p])continue;
       let supported=false;
       for(const [dx,dy] of dirs){
@@ -109,12 +113,18 @@ function removePaleWatermarkPixels(ctx,w,h){
       if(supported)remove[p]=1;
     }
   }
-  for(let p=0,i=0;p<pixels;p++,i+=4){
-    if(remove[p]){
-      // Keep the page's light background rather than introducing a coloured patch.
-      const v=Math.max(248,luminance[p]);
-      d[i]=255;d[i+1]=255;d[i+2]=255;d[i+3]=255;
+  // The sample PDF has a purple source/site label centred in the top header.
+  // Remove purple pixels only in that narrow header band; keep the red heading.
+  const headerLimit=Math.floor(h*.115);
+  for(let y=0;y<headerLimit;y++){
+    for(let x=0;x<w;x++){
+      const i=(y*w+x)*4,r=d[i],g=d[i+1],b=d[i+2];
+      const purple=(r<165&&b>75&&b>g*1.22&&r>g*1.15&&g<125);
+      if(purple)remove[y*w+x]=1;
     }
+  }
+  for(let p=0,i=0;p<pixels;p++,i+=4){
+    if(remove[p]){d[i]=255;d[i+1]=255;d[i+2]=255;d[i+3]=255;}
   }
   ctx.putImageData(im,0,0);
 }
@@ -123,35 +133,57 @@ function addGuidelyWatermark(ctx,w,h,logoImage){
   const logoW=logoImage.width||logoImage.naturalWidth,logoH=logoImage.height||logoImage.naturalHeight;const markW=w*scale,markH=markW*(logoH/logoW);
   ctx.save();ctx.globalAlpha=opacity;ctx.translate(w/2,h/2);ctx.rotate(-Math.PI/4);if(Number.isFinite(markW)&&Number.isFinite(markH)&&markW>0&&markH>0)ctx.drawImage(logoImage,-markW/2,-markH/2,markW,markH);ctx.restore();
 }
+function drawImageContain(page,image,pageWidth,pageHeight){
+  const iw=image.width||image.naturalWidth,ih=image.height||image.naturalHeight;
+  const scale=Math.min(pageWidth/iw,pageHeight/ih),w=iw*scale,h=ih*scale;
+  page.drawImage(image,{x:(pageWidth-w)/2,y:(pageHeight-h)/2,width:w,height:h});
+}
 async function processPdf(file,coverBytes,logoBytes){
-  const {PDFDocument}=PDFLib;const original=await PDFDocument.load(await file.arrayBuffer());const originalPages=original.getPages();
+  const {PDFDocument}=PDFLib;
+  const original=await PDFDocument.load(await file.arrayBuffer());
+  const originalPages=original.getPages();
   if(!originalPages.length)throw Error('PDF has no pages');
   const coverMode=$('coverMode')?.value||'replace';
+  const processingMode=getProcessingMode();
+  const watermarkOnly=processingMode==='watermarkOnly';
   const pdfjs=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer()),useWorkerFetch:true,isEvalSupported:false}).promise;
-  const out=await PDFDocument.create();const coverImage=await out.embedPng(coverBytes);const logoImage=await createImageBitmap(new Blob([logoBytes],{type:'image/jpeg'}));
+  const out=await PDFDocument.create();
+  const coverImage=watermarkOnly?null:await out.embedPng(coverBytes);
+  const logoImage=await createImageBitmap(new Blob([logoBytes],{type:'image/jpeg'}));
   try{
-    // Add mode inserts a new cover before every original page; replace mode preserves the old behaviour.
-    if(coverMode==='add'){
-      const firstSize=originalPages[0].getSize();
-      const coverPage=out.addPage([firstSize.width,firstSize.height]);
-      coverPage.drawImage(coverImage,{x:0,y:0,width:firstSize.width,height:firstSize.height});
-    }
     for(let i=0;i<originalPages.length;i++){
+      const pdfPage=await pdfjs.getPage(i+1);
       const sourceSize=originalPages[i].getSize();
-      if(coverMode!=='add' && i===0){
-        const coverPage=out.addPage([sourceSize.width,sourceSize.height]);
-        coverPage.drawImage(coverImage,{x:0,y:0,width:sourceSize.width,height:sourceSize.height});
+      const scale=Number(getSetting('renderScale'))||2.5;
+      const viewport=pdfPage.getViewport({scale});
+      // Use PDF.js's rotated/cropped viewport ratio for the output page. This
+      // prevents landscape/rotated/cropped source pages from being stretched.
+      const pageWidth=viewport.width/scale,pageHeight=viewport.height/scale;
+      if(!watermarkOnly && coverMode==='add' && i===0){
+        const coverPage=out.addPage([pageWidth,pageHeight]);
+        drawImageContain(coverPage,coverImage,pageWidth,pageHeight);
+      }
+      if(!watermarkOnly && coverMode!=='add' && i===0){
+        const coverPage=out.addPage([pageWidth,pageHeight]);
+        drawImageContain(coverPage,coverImage,pageWidth,pageHeight);
+        pdfPage.cleanup();
         continue;
       }
-      const outPage=out.addPage([sourceSize.width,sourceSize.height]);
-      const pdfPage=await pdfjs.getPage(i+1);const scale=Number(getSetting('renderScale'))||1.6;const viewport=pdfPage.getViewport({scale});
-      const canvas=document.createElement('canvas');canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);const ctx=canvas.getContext('2d',{willReadFrequently:true});
+      const outPage=out.addPage([pageWidth,pageHeight]);
+      const canvas=document.createElement('canvas');
+      canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);
+      const ctx=canvas.getContext('2d',{willReadFrequently:true});
       await pdfPage.render({canvasContext:ctx,viewport,background:'rgb(255,255,255)'}).promise;
       removePaleWatermarkPixels(ctx,canvas.width,canvas.height);
-      if(String(getSetting('addWatermark')??$('addWatermark').checked)!=='false' && getSetting('addWatermark')!==false)addGuidelyWatermark(ctx,canvas.width,canvas.height,logoImage);
+      if(String(getSetting('addWatermark')??$('addWatermark').checked)!=='false' && getSetting('addWatermark')!==false){
+        addGuidelyWatermark(ctx,canvas.width,canvas.height,logoImage);
+      }
       const pngBlob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Could not render page '+(i+1))),'image/png'));
-      const pngBytes=new Uint8Array(await pngBlob.arrayBuffer());const pageImage=await out.embedPng(pngBytes);outPage.drawImage(pageImage,{x:0,y:0,width:sourceSize.width,height:sourceSize.height});
-      canvas.width=1;canvas.height=1;pdfPage.cleanup();$('status').textContent=`Cleaning inner watermark ${i+1}/${originalPages.length}: ${file.name}`;
+      const pngBytes=new Uint8Array(await pngBlob.arrayBuffer());
+      const pageImage=await out.embedPng(pngBytes);
+      outPage.drawImage(pageImage,{x:0,y:0,width:pageWidth,height:pageHeight});
+      canvas.width=1;canvas.height=1;pdfPage.cleanup();
+      $('status').textContent=`Cleaning inner watermark ${i+1}/${originalPages.length}: ${file.name}`;
     }
     return await out.save();
   }finally{logoImage.close?.();await pdfjs.destroy();}
@@ -163,9 +195,14 @@ function rowToOverrides(row){const out={};const allowed=['title1','title2','year
 function extractDriveFolderId(value){const s=String(value||'').trim();const m=s.match(/drive\.google\.com\/drive\/folders\/([a-zA-Z0-9_-]+)/)||s.match(/folders\/([a-zA-Z0-9_-]+)/);return m?m[1]:s}
 function bytesToBase64(bytes){let binary='';const chunk=0x8000;for(let i=0;i<bytes.length;i+=chunk)binary+=String.fromCharCode(...bytes.subarray(i,i+chunk));return btoa(binary)}
 async function uploadFileToDrive(endpoint,secret,folderId,filename,bytes){const payload={secret,folderId,filename,mimeType:'application/pdf',base64:bytesToBase64(bytes)};await fetch(endpoint,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)});}
-$('rowPreview').addEventListener('click',e=>{const b=e.target.closest('.row-preview-btn');if(!b)return;const row=sheetRows[Number(b.dataset.row)];if(!row)return;activeOverrides=rowToOverrides(row);drawCover($('preview'));$('status').textContent=`Previewing sheet row ${Number(b.dataset.row)+1}. The selected row settings will be used for that PDF during processing.`;});
-$('coverMode').addEventListener('change',()=>{const add=$('coverMode').value==='add';$('process').textContent=add?'Add cover page & download ZIP':'Replace first page & download ZIP';});
-$('process').addEventListener('click',async()=>{if(!chosen.length&&!sheetRows.length)return;if(!window.PDFLib||!window.JSZip||!window.pdfjsLib){$('status').textContent='A PDF library failed to load. Refresh and check your internet connection.';return}const btn=$('process');btn.disabled=true;$('clear').disabled=true;try{const items=sheetRows.length?sheetRows.map((row,i)=>({row,index:i+1,file:null})):chosen.map((file,i)=>({row:{},index:i+1,file}));if(items.length>1000)throw Error('Maximum supported rows per run is 1000. Split very large sheets into smaller runs.');const logoBytes=await readImageBytes(logo);const zip=new JSZip();const outputs=[];let done=0;const errors=[];for(let i=0;i<items.length;i++){const item=items[i];let f=item.file;try{if(!f&&item.row.pdf_url){$('status').textContent=`Downloading PDF ${i+1}/${items.length} from sheet…`;f=await fetchPdfFromUrl(item.row.pdf_url)}if(!f)throw Error('Missing PDF. Add a working direct/public PDF URL in pdf_url.');activeOverrides=sheetRows.length?rowToOverrides(item.row):{};drawCover($('preview'));const coverBlob=await new Promise((resolve,reject)=>$('preview').toBlob(b=>b?resolve(b):reject(Error('Could not render cover')),'image/png'));const coverBytes=new Uint8Array(await coverBlob.arrayBuffer());$('status').textContent=`Processing ${i+1}/${items.length}: ${f.name}`;const bytes=await processPdf(f,coverBytes,logoBytes);let outName=String(f.name.replace(/\.pdf$/i,'')+'_Guidely.pdf').replace(/[\/:*?"<>|]/g,'_');if(!outName.toLowerCase().endsWith('.pdf'))outName+='.pdf';zip.file(outName,bytes);outputs.push({name:outName,bytes});done++}catch(err){errors.push(`${item.index}. ${item.row.pdf_url||item.file?.name||'Sheet row'}: ${err.message||String(err)}`)}}activeOverrides={};drawCover($('preview'));if(!done)throw Error('No PDFs processed.\n'+errors.join('\n'));$('status').textContent='Creating ZIP…';const blob=await zip.generateAsync({type:'blob'},m=>$('status').textContent='Creating ZIP… '+Math.round(m.percent)+'%');const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Guidely_Bulk_Processed.zip';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),60000);let driveMsg='ZIP downloaded. Drive upload not configured.';const endpoint=$('driveEndpoint').value.trim(),secret=$('driveSecret').value.trim(),folderId=extractDriveFolderId($('outputFolder').value);if(endpoint&&secret&&folderId){let uploaded=0;for(let i=0;i<outputs.length;i++){try{$('status').textContent=`Sending PDF ${i+1}/${outputs.length} to Google Drive…`;await uploadFileToDrive(endpoint,secret,folderId,outputs[i].name,outputs[i].bytes);uploaded++}catch(err){errors.push('Drive upload '+outputs[i].name+': '+err.message)}}driveMsg=`Upload requests sent for ${uploaded}/${outputs.length} file(s). Apps Script uses no-cors mode, so the browser cannot confirm each Drive result; check the target folder.`}$('status').textContent=`Finished: ${done}/${items.length} PDF(s) processed. ZIP downloaded.\n${driveMsg}`+(errors.length?'\nIssues:\n'+errors.join('\n'):'')+'\nNote: each sheet row controls its own cover text. Typography, quality and watermark settings come from the software controls.'}catch(err){$('status').textContent='Error: '+(err.message||String(err))}finally{activeOverrides={};btn.disabled=!(chosen.length||sheetRows.length);$('clear').disabled=false}});
+$('rowPreview').addEventListener('click',e=>{const b=e.target.closest('.row-preview-btn');if(!b)return;const row=sheetRows[Number(b.dataset.row)];if(!row)return;activeOverrides=rowToOverrides(row);drawActiveCover($('preview'));$('status').textContent=`Previewing sheet row ${Number(b.dataset.row)+1}. The selected row settings will be used for that PDF during processing.`;});
+$('coverMode').addEventListener('change',()=>{if(getProcessingMode()==='fixedCover')refreshProcessingMode();});
+function getProcessingMode(){return $('processingMode')?.value||'fixedCover';}
+function refreshProcessingMode(){const mode=getProcessingMode();const manual=mode==='manualCover';$('manualTemplateBuilder').style.display=manual?'block':'none';$('coverTypographyCard').style.display=(mode==='watermarkOnly')?'none':'block';$('examDetailsCard').style.display=(mode==='watermarkOnly')?'none':'block';$('coverMode').closest('.field').style.display=mode==='watermarkOnly'?'none':'block';$('preview').parentElement.parentElement.style.display=mode==='watermarkOnly'?'none':'block';$('process').textContent=mode==='watermarkOnly'?'Replace watermark only & download ZIP':(manual?'Create custom cover & download ZIP':($('coverMode').value==='add'?'Add cover page & download ZIP':'Replace first page & download ZIP'));if(mode!=='watermarkOnly')drawActiveCover($('preview'));}
+$('processingMode').addEventListener('change',refreshProcessingMode);
+$('customCoverBg').addEventListener('change',e=>{const f=e.target.files?.[0];if(!f){customBgImage=null;drawActiveCover($('preview'));return;}const img=new Image();img.onload=()=>{customBgImage=img;drawActiveCover($('preview'));};img.onerror=()=>{$('status').textContent='Could not load custom cover background image.'};img.src=URL.createObjectURL(f);});
+['customCoverColor','customTextColor','customAccentColor'].forEach(id=>$(id).addEventListener('input',()=>drawActiveCover($('preview'))));
+$('process').addEventListener('click',async()=>{if(!chosen.length&&!sheetRows.length)return;if(!window.PDFLib||!window.JSZip||!window.pdfjsLib){$('status').textContent='A PDF library failed to load. Refresh and check your internet connection.';return}const btn=$('process');btn.disabled=true;$('clear').disabled=true;try{const items=sheetRows.length?sheetRows.map((row,i)=>({row,index:i+1,file:null})):chosen.map((file,i)=>({row:{},index:i+1,file}));if(items.length>1000)throw Error('Maximum supported rows per run is 1000. Split very large sheets into smaller runs.');const logoBytes=await readImageBytes(logo);const zip=new JSZip();const outputs=[];let done=0;const errors=[];for(let i=0;i<items.length;i++){const item=items[i];let f=item.file;try{if(!f&&item.row.pdf_url){$('status').textContent=`Downloading PDF ${i+1}/${items.length} from sheet…`;f=await fetchPdfFromUrl(item.row.pdf_url)}if(!f)throw Error('Missing PDF. Add a working direct/public PDF URL in pdf_url.');activeOverrides=sheetRows.length?rowToOverrides(item.row):{};const mode=getProcessingMode();let coverBytes=null;if(mode!=='watermarkOnly'){drawActiveCover($('preview'));const coverBlob=await new Promise((resolve,reject)=>$('preview').toBlob(b=>b?resolve(b):reject(Error('Could not render cover')),'image/png'));coverBytes=new Uint8Array(await coverBlob.arrayBuffer());}$('status').textContent=`Processing ${i+1}/${items.length}: ${f.name}`;const bytes=await processPdf(f,coverBytes,logoBytes);let outName=String(f.name.replace(/\.pdf$/i,'')+'_Guidely.pdf').replace(/[\/:*?"<>|]/g,'_');if(!outName.toLowerCase().endsWith('.pdf'))outName+='.pdf';zip.file(outName,bytes);outputs.push({name:outName,bytes});done++}catch(err){errors.push(`${item.index}. ${item.row.pdf_url||item.file?.name||'Sheet row'}: ${err.message||String(err)}`)}}activeOverrides={};if(getProcessingMode()!=='watermarkOnly')drawActiveCover($('preview'));if(!done)throw Error('No PDFs processed.\n'+errors.join('\n'));$('status').textContent='Creating ZIP…';const blob=await zip.generateAsync({type:'blob'},m=>$('status').textContent='Creating ZIP… '+Math.round(m.percent)+'%');const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Guidely_Bulk_Processed.zip';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),60000);let driveMsg='ZIP downloaded. Drive upload not configured.';const endpoint=$('driveEndpoint').value.trim(),secret=$('driveSecret').value.trim(),folderId=extractDriveFolderId($('outputFolder').value);if(endpoint&&secret&&folderId){let uploaded=0;for(let i=0;i<outputs.length;i++){try{$('status').textContent=`Sending PDF ${i+1}/${outputs.length} to Google Drive…`;await uploadFileToDrive(endpoint,secret,folderId,outputs[i].name,outputs[i].bytes);uploaded++}catch(err){errors.push('Drive upload '+outputs[i].name+': '+err.message)}}driveMsg=`Upload requests sent for ${uploaded}/${outputs.length} file(s). Apps Script uses no-cors mode, so the browser cannot confirm each Drive result; check the target folder.`}$('status').textContent=`Finished: ${done}/${items.length} PDF(s) processed. ZIP downloaded.\n${driveMsg}`+(errors.length?'\nIssues:\n'+errors.join('\n'):'')+'\nNote: each sheet row controls its own cover text. Typography, quality and watermark settings come from the software controls.'}catch(err){$('status').textContent='Error: '+(err.message||String(err))}finally{activeOverrides={};btn.disabled=!(chosen.length||sheetRows.length);$('clear').disabled=false}});
 // Remember connector settings in this browser so they do not need to be re-entered every visit.
 // Note: the secret is stored in this browser's local storage; do not use on a shared/public computer.
 (function restoreConnectorSettings(){
@@ -180,5 +217,5 @@ $('process').addEventListener('click',async()=>{if(!chosen.length&&!sheetRows.le
   $('driveEndpoint').addEventListener('input', () => { try { localStorage.setItem('guidely_drive_endpoint', $('driveEndpoint').value.trim()); } catch (e) {} });
   $('driveSecret').addEventListener('input', () => { try { localStorage.setItem('guidely_drive_secret', $('driveSecret').value); } catch (e) {} });
 })();
-$('clear').addEventListener('click',()=>{chosen=[];sheetRows=[];$('files').value='';$('csvFile').value='';$('filelist').textContent='';$('sheetUrl').value='';$('outputFolder').value='';activeOverrides={};$('status').textContent='Selection cleared.';renderBulkSummary()});drawCover($('preview'));renderBulkSummary();
+$('clear').addEventListener('click',()=>{chosen=[];sheetRows=[];$('files').value='';$('csvFile').value='';$('filelist').textContent='';$('sheetUrl').value='';$('outputFolder').value='';activeOverrides={};$('status').textContent='Selection cleared.';renderBulkSummary()});drawActiveCover($('preview'));refreshProcessingMode();renderBulkSummary();
 </script></body></html>
